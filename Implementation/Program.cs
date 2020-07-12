@@ -51,21 +51,27 @@ namespace Implementation
                 List<AssociationRule> rules = new List<AssociationRule>();
                 rules = apriori.GetRules(frequent);
                 AssociationRules.Add(rules);
+                Console.WriteLine("Association Rule L{0}", k);
+                Console.WriteLine(string.Format("{0, -10} | {1,-10} | {2,5}","Rule","Confidence", "Support"));
+                foreach (var variable in rules)
+                {
+                    Console.WriteLine(string.Format("{0, -10} | {1,-10} | {2,5}", variable.Label, variable.Confidence, variable.Support));
+                }
                 next = true;
 
             } while (next);
 
-            Console.WriteLine("***************************");
-            Console.WriteLine("Association Rule");
-            Console.WriteLine("***************************");
+            //Console.WriteLine("***************************");
+            //Console.WriteLine("Association Rule");
+            //Console.WriteLine("***************************");
 
-            foreach (var item in AssociationRules)
-            {
-                foreach (var variable in item)
-                {
-                    Console.WriteLine("{0} - {1} - {2}", variable.Label, variable.Confidence, variable.Support);
-                }
-            }
+            //foreach (var item in AssociationRules)
+            //{
+            //    foreach (var variable in item)
+            //    {
+            //        Console.WriteLine(string.Format("{0, -10} | {1,-10} | {2,5}", variable.Label, variable.Confidence, variable.Support));
+            //    }
+            //}
         }
     }
 }
