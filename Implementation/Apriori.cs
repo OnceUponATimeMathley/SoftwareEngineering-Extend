@@ -205,10 +205,10 @@ namespace Implementation
             itemSet.Label = "L" + k.ToString();
             itemSet.Support = minSupport;
 
-            if (itemSet.Count > 0)
-            {
-                ItemSets.Add(itemSet);
-            }
+            //if (itemSet.Count > 0)
+            //{
+            //    ItemSets.Add(itemSet);
+            //}
 
             return itemSet;
         }
