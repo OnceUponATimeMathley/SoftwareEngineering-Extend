@@ -58,8 +58,6 @@ namespace Implementation
             //}
         }
 
-        
-
         private void Remove_Invalid_SetItem(ref List<List<string>> itemSet, List<List<string>> test)
         {
             List<List<string>> copy = new List<List<string>>();
@@ -165,6 +163,7 @@ namespace Implementation
                 itemSet.Add(data, 0);
 
             }
+
             return itemSet;
         }
 
@@ -205,6 +204,12 @@ namespace Implementation
 
             itemSet.Label = "L" + k.ToString();
             itemSet.Support = minSupport;
+
+            if (itemSet.Count > 0)
+            {
+                ItemSets.Add(itemSet);
+            }
+
             return itemSet;
         }
 
@@ -214,7 +219,63 @@ namespace Implementation
             result = Apriori_Gen(itemSet.Keys.ToList(), k, minSupport);
             result.Label = "L" + (k + 1).ToString();
             result.Support = minSupport;
+
+            if (itemSet.Count > 0)
+            {
+                ItemSets.Add(itemSet);
+            }
+
             return result;
+        }
+
+        internal List<AssociationRule> GetRules(ItemSet frequent)
+        {
+            List<AssociationRule> rules = new List<AssociationRule>();
+            foreach (var item in frequent)
+            {
+                foreach (var set in item.Key)
+                {
+                    rules.Add(GetSingleRule(set, item));
+                    if (item.Key.Count > 2)
+                        rules.Add(GetSingleRule(item.Key.ToDisplay(exclude: set), item));
+                }
+            }
+
+            return rules.OrderByDescending(a => a.Support)
+                        .ThenByDescending(a => a.Confidence).ToList();
+        }
+
+        private AssociationRule GetSingleRule(string set, KeyValuePair<List<string>, int> item)
+        {
+            var setItems = set.Split(',');
+            for (int i = 0; i < setItems.Count(); i++)
+            {
+                setItems[i] = setItems[i].Trim();
+            }
+            AssociationRule rule = new AssociationRule();
+            StringBuilder sb = new StringBuilder();
+            sb.Append(set).Append(" => ");
+            List<string> list = new List<string>();
+            foreach (var set2 in item.Key)
+            {
+                if (setItems.Contains(set2)) continue;
+                list.Add(set2);
+            }
+            sb.Append(list.ToDisplay());
+            rule.Label = sb.ToString();
+            int totalSet = 0;
+            foreach (var first in ItemSets)
+            {
+                var myItem = first.Keys.Where(a => a.ToDisplay() == set);
+                if (myItem.Count() > 0)
+                {
+                    first.TryGetValue(myItem.FirstOrDefault(), out totalSet);
+                    break;
+                }
+            }
+            rule.Confidence = Math.Round(((double)item.Value / totalSet) * 100, 2);
+            rule.Support = Math.Round(((double)item.Value / this.list.Count) * 100, 2);
+            return rule;
         }
     }
 }

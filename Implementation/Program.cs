@@ -10,6 +10,7 @@ namespace Implementation
         {
             Apriori apriori = new Apriori();
             List<ItemSet> ItemSets = new List<ItemSet>();
+            List<List<AssociationRule>> AssociationRules = new List<List<AssociationRule>>();
 
             int k = 1;
             int minSupport = 2;
@@ -44,13 +45,27 @@ namespace Implementation
 
                 if (frequent.Count > 0)
                     ItemSets.Add(frequent);
-                else return;
+                else break;
                 ++k;
                 temp = frequent;
+                List<AssociationRule> rules = new List<AssociationRule>();
+                rules = apriori.GetRules(frequent);
+                AssociationRules.Add(rules);
                 next = true;
 
             } while (next);
 
+            Console.WriteLine("***************************");
+            Console.WriteLine("Association Rule");
+            Console.WriteLine("***************************");
+
+            foreach (var item in AssociationRules)
+            {
+                foreach (var variable in item)
+                {
+                    Console.WriteLine("{0} - {1} - {2}", variable.Label, variable.Confidence, variable.Support);
+                }
+            }
         }
     }
 }
