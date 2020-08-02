@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace Implementation
+namespace ImplementationAS
 {
     public class Apriori
     {
-        private string filePath = @"E:\HK IV\Công nghệ phần mềm\HPMR\SoftwareEngineering\Implementation\demo.txt";
+        //private string filePath = @"E:\HK IV\Công nghệ phần mềm\HPMR\SoftwareEngineering\ImplementationAS\demo.txt";
         private List<string> list;
         private List<string> DistinctValues;
         private List<ItemSet> ItemSets;
 
-        public Apriori()
+        public Apriori(string filePath)
         {
             if (File.Exists(filePath))
             {
@@ -58,7 +59,7 @@ namespace Implementation
             //}
         }
 
-        private void Remove_Invalid_SetItem(ref List<List<string>> itemSet, List<List<string>> test)
+        public void Remove_Invalid_SetItem(ref List<List<string>> itemSet, List<List<string>> test)
         {
             List<List<string>> copy = new List<List<string>>();
             foreach (var variable in itemSet)
@@ -93,7 +94,7 @@ namespace Implementation
             }
         }
 
-        private ItemSet Apriori_Gen(List<List<string>> input, int k, int minSupport)
+        public ItemSet Apriori_Gen(List<List<string>> input, int k, int minSupport)
         {
             List<List<string>> result = new List<List<string>>();
 
@@ -104,7 +105,7 @@ namespace Implementation
                     bool isValid = true;
                     for (int t = 0; t < k - 1; t++)
                     {
-                        if(input[i][t] == input[j][t]) continue;
+                        if (input[i][t] == input[j][t]) continue;
                         else
                         {
                             isValid = false;
@@ -116,7 +117,7 @@ namespace Implementation
                     {
                         List<string> temp = new List<string>();
                         temp.AddRange(input[i]);
-                        temp.Add(input[j][k-1]);
+                        temp.Add(input[j][k - 1]);
                         result.Add(temp);
                     }
                     else continue;
@@ -131,11 +132,11 @@ namespace Implementation
                 int count = 0;
                 foreach (var variable in list)
                 {
-                    var temp = variable.Trim().Split(" ");
+                    var temp = variable.Trim().Split(' ');
                     bool isValid = true;
                     foreach (var t in item)
                     {
-                        if(temp.Contains(t)) continue;
+                        if (temp.Contains(t)) continue;
                         else
                         {
                             isValid = false;
@@ -146,14 +147,14 @@ namespace Implementation
                     if (isValid)
                         count++;
                 }
-                if(count>=minSupport)
+                if (count >= minSupport)
                     itemSet.Add(item, count);
             }
 
             return itemSet;
         }
 
-        private ItemSet Get_First_Candidate_ItemSet(int k)
+        public ItemSet Get_First_Candidate_ItemSet(int k)
         {
             ItemSet itemSet = new ItemSet();
             foreach (var item in DistinctValues)
@@ -167,7 +168,7 @@ namespace Implementation
             return itemSet;
         }
 
-        private void SetDistinctValues(List<string> values)
+        public void SetDistinctValues(List<string> values)
         {
             List<string> data = new List<string>();
             foreach (var item in values)
@@ -184,15 +185,15 @@ namespace Implementation
             DistinctValues.AddRange(data.OrderBy(a => a).ToList());
         }
 
-        internal ItemSet Get_First_Frequent_ItemSet(int k, int minSupport)
+        public ItemSet Get_First_Frequent_ItemSet(int k, int minSupport)
         {
-            ItemSet itemSet = Get_First_Candidate_ItemSet(k:1);
+            ItemSet itemSet = Get_First_Candidate_ItemSet(k: 1);
             foreach (var item in itemSet.Keys.ToList())
             {
                 int count = 0;
                 foreach (var item2 in list)
                 {
-                    var temp = item2.Trim().Split(" ");
+                    var temp = item2.Trim().Split(' ');
                     if (temp.Contains(item[0]))
                         count++;
                 }
@@ -213,7 +214,7 @@ namespace Implementation
             return itemSet;
         }
 
-        internal ItemSet Get_Frequent_ItemSet(int k, ItemSet itemSet, int minSupport)
+        public ItemSet Get_Frequent_ItemSet(int k, ItemSet itemSet, int minSupport)
         {
             ItemSet result = new ItemSet();
             result = Apriori_Gen(itemSet.Keys.ToList(), k, minSupport);
@@ -227,8 +228,8 @@ namespace Implementation
 
             return result;
         }
-        
-        internal List<AssociationRule> GetRules(ItemSet frequent)
+
+        public List<AssociationRule> GetRules(ItemSet frequent)
         {
             List<AssociationRule> rules = new List<AssociationRule>();
             foreach (var item in frequent)
@@ -245,7 +246,7 @@ namespace Implementation
                         .ThenByDescending(a => a.Confidence).ToList();
         }
 
-        private AssociationRule GetSingleRule(string set, KeyValuePair<List<string>, int> item)
+        public AssociationRule GetSingleRule(string set, KeyValuePair<List<string>, int> item)
         {
             var setItems = set.Split(',');
             for (int i = 0; i < setItems.Count(); i++)
@@ -279,3 +280,4 @@ namespace Implementation
         }
     }
 }
+

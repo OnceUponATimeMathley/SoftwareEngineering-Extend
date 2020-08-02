@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace Implementation
+namespace ImplementationAS
 {
     public static class Service
     {
@@ -28,6 +30,11 @@ namespace Implementation
                 temp.Add(item.ToString());
             }
             return temp.ToDisplay();
+        }
+
+        public static string ToPercentString(this object item)
+        {
+            return item.ToString() + " %";
         }
     }
 }
